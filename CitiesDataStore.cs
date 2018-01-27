@@ -15,13 +15,37 @@ namespace FirstAPI
                 {
                     Id=1,
                     Name="Paris",
-                    Description="The big iron tower in the middle"
+                    Description="The big iron tower in the middle",
+                    PointOfInterest=new List<PointOfInterestDto>()
+                    {
+                        new PointOfInterestDto()
+                        {
+                            Id=1,
+                            Name="Effel Tower",
+                            Description="Old Iron Tower in the middle of city"
+                        },
+                        new PointOfInterestDto()
+                        {
+                            Id=2,
+                            Name="Seine River",
+                            Description="The Seine (/seɪn/ SAYN; French: La Seine, pronounced [la sɛːn]) is a 777-kilometre-long (483 mi) river and an important commercial waterway within the Paris Basin in the north of France."
+                        }
+                    }
                 },
                 new CityDto()
                 {
                     Id=2,
                     Name="Los Angeles",
-                    Description="The yellow long bridge"
+                    Description="The yellow long bridge",
+                    PointOfInterest=new List<PointOfInterestDto>()
+                    {
+                        new PointOfInterestDto()
+                        {
+                            Id=1,
+                            Name="Golden Bridge",
+                            Description="Long Nice Bridge"
+                        }
+                    }
                 }
             };
         }
