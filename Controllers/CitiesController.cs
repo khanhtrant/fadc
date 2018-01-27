@@ -9,16 +9,20 @@ namespace FirstAPI.Controllers
     public class CitiesController : Controller
     {
         [HttpGet()]
-        public JsonResult GetCities()
+        public IActionResult GetCities()
         {
-            return new JsonResult(CitiesDataStore.Current.Cities);
+            return Ok(CitiesDataStore.Current.Cities);
         }
 
         [HttpGet("{id}")]
-        public JsonResult GetCity(int id)
+        public IActionResult GetCity(int id)
         {
             var model = CitiesDataStore.Current.Cities.FirstOrDefault(m => m.Id == id);
-            return new JsonResult(model);
+            if (model==null)
+            {
+                return NotFound();
+            }
+            return Ok(model);
         }
     }
 }
