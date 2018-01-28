@@ -148,5 +148,24 @@ namespace FirstAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("{cityId}/pointsofinterest/{id}")]
+        public IActionResult DeletePointOfInterest(int cityId,int id)
+        {
+            var city = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
+            if (city == null)
+            {
+                return NotFound();
+            }
+
+            var model = city.PointOfInterest.SingleOrDefault(m => m.Id == id);
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
+            city.PointOfInterest.Remove(model);
+            return NoContent();            
+        }
     }
 }
