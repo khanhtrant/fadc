@@ -51,7 +51,7 @@ namespace FirstAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,CityDbContext cityDbContext)
         {
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
@@ -73,6 +73,8 @@ namespace FirstAPI
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+
+            cityDbContext.EnsureSeedDatabaseForContext();
 
 
             app.UseMvc();
