@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FirstAPI.Entities;
+using FirstAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,7 @@ namespace FirstAPI
 
         public Startup(IConfiguration configuration)
         {
-            _configuration=configuration;
+            _configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -42,16 +43,18 @@ namespace FirstAPI
                 }
             });
 
-            services.AddDbContext<CityDbContext>(options=>options.UseSqlServer(_configuration.GetConnectionString("Default")));
+            services.AddDbContext<CityDbContext>(options => options.UseSqlServer(_configuration.GetConnectionString("Default")));
 
             services.AddSwaggerGen(c =>
-    {
-        c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
-    });
+            {
+                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+            });
+
+            services.AddScoped<ICityInfoRepository, CityInfoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,CityDbContext cityDbContext)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, CityDbContext cityDbContext)
         {
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
