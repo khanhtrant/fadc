@@ -9,5 +9,6 @@ namespace FirstAPI.Services
         City GetCity(int CityId,bool includePointsOfInterest);
         IEnumerable<PointOfInterest> GetPointsOfInterestForCity(int CityId);
         PointOfInterest GetPointOfInterestForCity(int CityId, int Id);
+        bool CityExists(int CityId);
     }
 }

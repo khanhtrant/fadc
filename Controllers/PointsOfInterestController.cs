@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using FirstAPI.Models;
+using FirstAPI.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,10 +13,12 @@ namespace FirstAPI.Controllers
     public class PointsOfInterestController : Controller
     {
         private ILogger<PointsOfInterestController> _logger;
+        private ICityInfoRepository _cityInfoRepository;
 
-        public PointsOfInterestController(ILogger<PointsOfInterestController> logger)
+        public PointsOfInterestController(ILogger<PointsOfInterestController> logger, ICityInfoRepository cityInfoRepository)
         {
             _logger = logger;
+            _cityInfoRepository = cityInfoRepository;
         }
 
         [HttpGet("{cityId}/pointsofinterest")]
@@ -22,18 +26,30 @@ namespace FirstAPI.Controllers
         {
             try
             {
-                var model = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
-                if (model == null)
+                //var model = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
+                if (!_cityInfoRepository.CityExists(cityId))
                 {
                     _logger.LogInformation($"City with {cityId} doesn't exist");
                     return NotFound();
                 }
-                return Ok(model.PointOfInterest);
+                var city = _cityInfoRepository.GetPointsOfInterestForCity(cityId);
+                var result = new List<PointOfInterestDto>();
+                foreach (var item in city)
+                {
+                    result.Add(new PointOfInterestDto()
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Description = item.Description
+                    });
+                }
+
+                return Ok(result);
             }
             catch (Exception e)
             {
-                _logger.LogCritical($"Exception: {cityId}",e);
-                return StatusCode(500,"Problem");
+                _logger.LogCritical($"Exception: {cityId}", e);
+                return StatusCode(500, "Problem");
             }
 
 
@@ -42,17 +58,23 @@ namespace FirstAPI.Controllers
         [HttpGet("{cityId}/pointsofinterest/{id}", Name = "GetPointOfInterest")]
         public IActionResult GetPointOfInterest(int cityId, int id)
         {
-            var city = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
-            if (city == null)
+            if (!_cityInfoRepository.CityExists(cityId))
+            {
+                _logger.LogInformation($"City with {cityId} doesn't exist");
+                return NotFound();
+            }
+            var pointOfInterest = _cityInfoRepository.GetPointOfInterestForCity(cityId, id);
+            if (pointOfInterest==null)
             {
                 return NotFound();
             }
-            var PointOfInterest = city.PointOfInterest.SingleOrDefault(m => m.Id == id);
-            if (PointOfInterest == null)
+            var result=new PointOfInterestDto()
             {
-                return NotFound();
-            }
-            return Ok(PointOfInterest);
+                Id=pointOfInterest.Id,
+                Name=pointOfInterest.Name,
+                Description=pointOfInterest.Description
+            };
+            return Ok(result);
         }
 
         [HttpPost("{cityId}/pointsofinterest")]
