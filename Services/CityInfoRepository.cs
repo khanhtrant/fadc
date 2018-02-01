@@ -16,7 +16,7 @@ namespace FirstAPI.Services
 
         public IEnumerable<City> GetCities()
         {
-            return _context.City.OrderBy(m => m.Id);
+            return _context.City.OrderBy(m => m.Name).ToList();
         }
 
         public City GetCity(int CityId, bool includePointsOfInterest)
