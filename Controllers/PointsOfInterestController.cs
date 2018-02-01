@@ -2,12 +2,20 @@ using System.Linq;
 using FirstAPI.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace FirstAPI.Controllers
 {
     [Route("api/cities")]
     public class PointsOfInterestController : Controller
     {
+        private ILogger<PointsOfInterestController> _logger;
+
+        public PointsOfInterestController(ILogger<PointsOfInterestController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet("{cityId}/pointsofinterest")]
         public IActionResult GetPointsOfInterest(int cityId)
         {
@@ -137,20 +145,20 @@ namespace FirstAPI.Controllers
                 Description = model.Name
             };
 
-            patchDoc.ApplyTo(pointOfInterestToPatch,ModelState);
+            patchDoc.ApplyTo(pointOfInterestToPatch, ModelState);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            model.Name=pointOfInterestToPatch.Name;
-            model.Description=pointOfInterestToPatch.Description;
+            model.Name = pointOfInterestToPatch.Name;
+            model.Description = pointOfInterestToPatch.Description;
 
             return NoContent();
         }
 
         [HttpDelete("{cityId}/pointsofinterest/{id}")]
-        public IActionResult DeletePointOfInterest(int cityId,int id)
+        public IActionResult DeletePointOfInterest(int cityId, int id)
         {
             var city = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
             if (city == null)
@@ -165,7 +173,7 @@ namespace FirstAPI.Controllers
             }
 
             city.PointOfInterest.Remove(model);
-            return NoContent();            
+            return NoContent();
         }
     }
 }
