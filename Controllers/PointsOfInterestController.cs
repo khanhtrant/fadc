@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FirstAPI.Models;
 using Microsoft.AspNetCore.JsonPatch;
@@ -19,12 +20,23 @@ namespace FirstAPI.Controllers
         [HttpGet("{cityId}/pointsofinterest")]
         public IActionResult GetPointsOfInterest(int cityId)
         {
-            var model = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
-            if (model == null)
+            try
             {
-                return NotFound();
+                var model = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
+                if (model == null)
+                {
+                    _logger.LogInformation($"City with {cityId} doesn't exist");
+                    return NotFound();
+                }
+                return Ok(model.PointOfInterest);
             }
-            return Ok(model.PointOfInterest);
+            catch (Exception e)
+            {
+                _logger.LogCritical($"Exception: {cityId}",e);
+                return StatusCode(500,"Problem");
+            }
+
+
         }
 
         [HttpGet("{cityId}/pointsofinterest/{id}", Name = "GetPointOfInterest")]
