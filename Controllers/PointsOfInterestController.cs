@@ -120,20 +120,22 @@ namespace FirstAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var city = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
-            if (city == null)
+            if (!_cityInfoRepository.CityExists(cityId))
             {
-                return NotFound();
+                return NotFound();   
             }
 
-            var model = city.PointsOfInterest.SingleOrDefault(m => m.Id == Id);
-            if (model == null)
-            {
-                return BadRequest();
-            }
+           var pointOfInterestEntity=_cityInfoRepository.GetPointOfInterestForCity(cityId,Id);
+           if (pointOfInterestEntity==null)
+           {
+               return NotFound();
+           }
 
-            model.Name = pointOfInterest.Name;
-            model.Description = pointOfInterest.Description;
+            Mapper.Map(pointOfInterest,pointOfInterestEntity);
+            if (!_cityInfoRepository.Save())
+            {
+                return StatusCode(500,"Problem");
+            }
 
             return NoContent();
         }

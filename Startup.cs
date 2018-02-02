@@ -85,6 +85,7 @@ namespace FirstAPI
                 cfg.CreateMap<Entities.City,Models.CityDto>();
                 cfg.CreateMap<Entities.PointOfInterest,Models.PointOfInterestDto>();
                 cfg.CreateMap<Models.PointOfInterestForCreation,Entities.PointOfInterest>();
+                cfg.CreateMap<Models.PointOfInterestToUpdate,Entities.PointOfInterest>();
             });
 
 
