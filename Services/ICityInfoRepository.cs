@@ -10,5 +10,7 @@ namespace FirstAPI.Services
         IEnumerable<PointOfInterest> GetPointsOfInterestForCity(int CityId);
         PointOfInterest GetPointOfInterestForCity(int CityId, int Id);
         bool CityExists(int CityId);
+        void AddPointOfInterestForCity(int cityId,PointOfInterest pointOfInterest);
+        bool Save();
     }
 }

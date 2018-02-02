@@ -14,6 +14,12 @@ namespace FirstAPI.Services
             _context = context;
         }
 
+        public void AddPointOfInterestForCity(int cityId, PointOfInterest pointOfInterest)
+        {
+            var city = GetCity(cityId, false);
+            city.PointsOfInterest.Add(pointOfInterest);
+        }
+
         public bool CityExists(int CityId)
         {
             return _context.City.Any(c => c.Id == CityId);
@@ -48,6 +54,11 @@ namespace FirstAPI.Services
             return _context.PointsOfInterest
                         .Where(p => p.CityId == CityId)
                         .ToList();
+        }
+
+        public bool Save()
+        {
+            return (_context.SaveChanges() >= 0);
         }
     }
 }
