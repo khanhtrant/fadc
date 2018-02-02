@@ -53,11 +53,11 @@ namespace FirstAPI.Controllers
                 return NotFound();
             }
             var pointOfInterest = _cityInfoRepository.GetPointOfInterestForCity(cityId, id);
-            if (pointOfInterest==null)
+            if (pointOfInterest == null)
             {
                 return NotFound();
             }
-            var result=Mapper.Map<PointOfInterestDto>(pointOfInterest);
+            var result = Mapper.Map<PointOfInterestDto>(pointOfInterest);
             return Ok(result);
         }
 
@@ -86,14 +86,14 @@ namespace FirstAPI.Controllers
 
             var finalPointOfInterest = Mapper.Map<Entities.PointOfInterest>(pointOfInterest);
 
-            _cityInfoRepository.AddPointOfInterestForCity(cityId,finalPointOfInterest);
+            _cityInfoRepository.AddPointOfInterestForCity(cityId, finalPointOfInterest);
 
             if (!_cityInfoRepository.Save())
             {
-                return StatusCode(500,"Problem");
+                return StatusCode(500, "Problem");
             }
 
-            var createPointOfInterestToReturn=Mapper.Map<Models.PointOfInterestDto>(finalPointOfInterest);
+            var createPointOfInterestToReturn = Mapper.Map<Models.PointOfInterestDto>(finalPointOfInterest);
 
             return CreatedAtRoute("GetPointOfInterest", new
             {
@@ -122,19 +122,19 @@ namespace FirstAPI.Controllers
 
             if (!_cityInfoRepository.CityExists(cityId))
             {
-                return NotFound();   
+                return NotFound();
             }
 
-           var pointOfInterestEntity=_cityInfoRepository.GetPointOfInterestForCity(cityId,Id);
-           if (pointOfInterestEntity==null)
-           {
-               return NotFound();
-           }
+            var pointOfInterestEntity = _cityInfoRepository.GetPointOfInterestForCity(cityId, Id);
+            if (pointOfInterestEntity == null)
+            {
+                return NotFound();
+            }
 
-            Mapper.Map(pointOfInterest,pointOfInterestEntity);
+            Mapper.Map(pointOfInterest, pointOfInterestEntity);
             if (!_cityInfoRepository.Save())
             {
-                return StatusCode(500,"Problem");
+                return StatusCode(500, "Problem");
             }
 
             return NoContent();
@@ -148,23 +148,18 @@ namespace FirstAPI.Controllers
                 return BadRequest();
             }
 
-            var city = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
-            if (city == null)
+            if (!_cityInfoRepository.CityExists(cityId))
             {
                 return NotFound();
             }
 
-            var model = city.PointsOfInterest.SingleOrDefault(m => m.Id == id);
-            if (model == null)
+            var pointOfInterestEntity = _cityInfoRepository.GetPointOfInterestForCity(cityId, id);
+            if (pointOfInterestEntity == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            var pointOfInterestToPatch = new PointOfInterestToUpdate()
-            {
-                Name = model.Name,
-                Description = model.Name
-            };
+            var pointOfInterestToPatch = Mapper.Map<PointOfInterestToUpdate>(pointOfInterestEntity);
 
             patchDoc.ApplyTo(pointOfInterestToPatch, ModelState);
             if (!ModelState.IsValid)
@@ -172,8 +167,12 @@ namespace FirstAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            model.Name = pointOfInterestToPatch.Name;
-            model.Description = pointOfInterestToPatch.Description;
+            Mapper.Map(pointOfInterestToPatch, pointOfInterestEntity);
+
+            if (!_cityInfoRepository.Save())
+            {
+                return StatusCode(500,"Problem");
+            }
 
             return NoContent();
         }
