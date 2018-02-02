@@ -180,19 +180,24 @@ namespace FirstAPI.Controllers
         [HttpDelete("{cityId}/pointsofinterest/{id}")]
         public IActionResult DeletePointOfInterest(int cityId, int id)
         {
-            var city = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
-            if (city == null)
+            if (!_cityInfoRepository.CityExists(cityId))
             {
                 return NotFound();
             }
 
-            var model = city.PointsOfInterest.SingleOrDefault(m => m.Id == id);
-            if (model == null)
+            var pointOfInterestEntity=_cityInfoRepository.GetPointOfInterestForCity(cityId,id);
+            if (pointOfInterestEntity==null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            city.PointsOfInterest.Remove(model);
+            _cityInfoRepository.DeletePointOfInterest(pointOfInterestEntity);
+
+            if (!_cityInfoRepository.Save())
+            {
+                return StatusCode(500,"Problem");
+            }
+
             return NoContent();
         }
     }

@@ -25,6 +25,11 @@ namespace FirstAPI.Services
             return _context.City.Any(c => c.Id == CityId);
         }
 
+        public void DeletePointOfInterest(PointOfInterest pointOfInterest)
+        {
+            _context.PointsOfInterest.Remove(pointOfInterest);
+        }
+
         public IEnumerable<City> GetCities()
         {
             return _context.City.OrderBy(m => m.Name).ToList();

@@ -11,6 +11,7 @@ namespace FirstAPI.Services
         PointOfInterest GetPointOfInterestForCity(int CityId, int Id);
         bool CityExists(int CityId);
         void AddPointOfInterestForCity(int cityId,PointOfInterest pointOfInterest);
+        void DeletePointOfInterest(PointOfInterest pointOfInterest);
         bool Save();
     }
 }
