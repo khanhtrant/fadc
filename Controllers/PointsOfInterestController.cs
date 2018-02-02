@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using FirstAPI.Models;
 using FirstAPI.Services;
 using Microsoft.AspNetCore.JsonPatch;
@@ -26,23 +27,13 @@ namespace FirstAPI.Controllers
         {
             try
             {
-                //var model = CitiesDataStore.Current.Cities.SingleOrDefault(m => m.Id == cityId);
                 if (!_cityInfoRepository.CityExists(cityId))
                 {
                     _logger.LogInformation($"City with {cityId} doesn't exist");
                     return NotFound();
                 }
                 var city = _cityInfoRepository.GetPointsOfInterestForCity(cityId);
-                var result = new List<PointOfInterestDto>();
-                foreach (var item in city)
-                {
-                    result.Add(new PointOfInterestDto()
-                    {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Description = item.Description
-                    });
-                }
+                var result = Mapper.Map<IEnumerable<PointOfInterestDto>>(city);
 
                 return Ok(result);
             }
@@ -51,8 +42,6 @@ namespace FirstAPI.Controllers
                 _logger.LogCritical($"Exception: {cityId}", e);
                 return StatusCode(500, "Problem");
             }
-
-
         }
 
         [HttpGet("{cityId}/pointsofinterest/{id}", Name = "GetPointOfInterest")]
@@ -68,12 +57,7 @@ namespace FirstAPI.Controllers
             {
                 return NotFound();
             }
-            var result=new PointOfInterestDto()
-            {
-                Id=pointOfInterest.Id,
-                Name=pointOfInterest.Name,
-                Description=pointOfInterest.Description
-            };
+            var result=Mapper.Map<PointOfInterestDto>(pointOfInterest);
             return Ok(result);
         }
 
@@ -101,7 +85,7 @@ namespace FirstAPI.Controllers
                 return NotFound();
             }
 
-            var maxPointOfInterestId = CitiesDataStore.Current.Cities.SelectMany(c => c.PointOfInterest).Max(p => p.Id);
+            var maxPointOfInterestId = CitiesDataStore.Current.Cities.SelectMany(c => c.PointsOfInterest).Max(p => p.Id);
 
             var finalPointOfInterest = new PointOfInterestDto()
             {
@@ -141,7 +125,7 @@ namespace FirstAPI.Controllers
                 return NotFound();
             }
 
-            var model = city.PointOfInterest.SingleOrDefault(m => m.Id == Id);
+            var model = city.PointsOfInterest.SingleOrDefault(m => m.Id == Id);
             if (model == null)
             {
                 return BadRequest();
@@ -167,7 +151,7 @@ namespace FirstAPI.Controllers
                 return NotFound();
             }
 
-            var model = city.PointOfInterest.SingleOrDefault(m => m.Id == id);
+            var model = city.PointsOfInterest.SingleOrDefault(m => m.Id == id);
             if (model == null)
             {
                 return BadRequest();
@@ -200,13 +184,13 @@ namespace FirstAPI.Controllers
                 return NotFound();
             }
 
-            var model = city.PointOfInterest.SingleOrDefault(m => m.Id == id);
+            var model = city.PointsOfInterest.SingleOrDefault(m => m.Id == id);
             if (model == null)
             {
                 return BadRequest();
             }
 
-            city.PointOfInterest.Remove(model);
+            city.PointsOfInterest.Remove(model);
             return NoContent();
         }
     }

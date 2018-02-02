@@ -16,7 +16,7 @@ namespace FirstAPI
                     Id=1,
                     Name="Paris",
                     Description="The big iron tower in the middle",
-                    PointOfInterest=new List<PointOfInterestDto>()
+                    PointsOfInterest=new List<PointOfInterestDto>()
                     {
                         new PointOfInterestDto()
                         {
@@ -37,7 +37,7 @@ namespace FirstAPI
                     Id=2,
                     Name="Los Angeles",
                     Description="The yellow long bridge",
-                    PointOfInterest=new List<PointOfInterestDto>()
+                    PointsOfInterest=new List<PointOfInterestDto>()
                     {
                         new PointOfInterestDto()
                         {

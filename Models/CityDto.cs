@@ -11,11 +11,11 @@ namespace FirstAPI.Models
         {
             get
             {
-                return PointOfInterest.Count;
+                return PointsOfInterest.Count;
             }
         }
 
-        public ICollection<PointOfInterestDto> PointOfInterest { get; set; } =
-        new List<PointOfInterestDto>();
+        public ICollection<PointOfInterestDto> PointsOfInterest { get; set; } 
+        =new List<PointOfInterestDto>();
     }
 }
